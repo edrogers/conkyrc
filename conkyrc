@@ -10,7 +10,7 @@ gap_x 0
 gap_y 0
 minimum_size 268 1220
 maximum_width 268
-alignment top_left
+alignment top_right
 own_window yes
 own_window_type normal
 own_window_transparent yes
@@ -55,24 +55,28 @@ color7 FFFFFF
 color8 FFFFFF
 
 TEXT
-${execi 300 curl -s "http://weather.yahooapis.com/forecastrss?w=493776&u=c" -o ~/.cache/weather.xml}
+${execi 300 /home/ed/.conky/downloadWeather.sh }
 \
 # Weather
 \
 ${goto 36}${voffset 0}${font Droid Sans :size=36}${color1}${execi 300 grep "yweather:condition" ~/.cache/weather.xml | grep -o "temp=\"[^\"]*\"" | grep -o "\"[^\"]*\"" | grep -o "[^\"]*"}°${font}${color}
-${goto 46}${voffset 14}${font Droid Sans :size=12}${color1}${execi 300 grep "yweather:condition" ~/.cache/weather.xml | grep -o "text=\"[^\"]*\"" | grep -o "\"[^\"]*\"" | grep -o "[^\"]*"}${font}${color}
+${goto 46}${voffset 14}${font Droid Sans :size=12}${color1}${execi 300 grep "yweather:condition" ~/.cache/weather.xml | grep -o "text=\"[^\"]*\"" | grep -o "\"[^\"]*\"" | grep -o "[^\"]*" | head -1}${font}${color}
 \
-${color1}${alignr 55}${voffset -72}${execi 300 grep "yweather:atmosphere" ~/.cache/weather.xml | grep -o "pressure=\"[^\"]*\"" | grep -o "\"[^\"]*\"" | grep -o "[^\"]*"} ${execi 300 grep "yweather:units" ~/.cache/weather.xml | grep -o "pressure=\"[^\"]*\"" | grep -o "\"[^\"]*\"" | grep -O "[^\"]*"}
+# This one is inches
+# ${color1}${alignr 55}${voffset -72}${execi 300 grep "yweather:atmosphere" ~/.cache/weather.xml | grep -o "pressure=\"[^\"]*\"" | grep -o "\"[^\"]*\"" | grep -o "[^\"]*"} ${execi 300 grep "yweather:units" ~/.cache/weather.xml | grep -o "pressure=\"[^\"]*\"" | grep -o "\"[^\"]*\"" | grep -o "[^\"]*"}
+# And this one is milliBar
+${color1}${alignr 55}${voffset -72}${execi 300 grep "yweather:atmosphere" ~/.cache/weather.xml | grep -o "pressure=\"[^\"]*\"" | grep -o "\"[^\"]*\"" | grep -o "[^\"]*" | tail -1 | xargs printf "%1.0f"} ${execi 300 echo "mb"}
+# xargs echo 33.86389 \* | bc -l | xargs printf "%1.0f"} ${execi 300 echo "mb"}
 ${color1}${alignr 55}${voffset 7}${execi 300 grep "yweather:atmosphere" ~/.cache/weather.xml | grep -o "humidity=\"[^\"]*\"" | grep -o "\"[^\"]*\"" | grep -o "[^\"]*"} %${color}
-${color1}${alignr 55}${voffset 7}${execi 300 grep "yweather:wind" ~/.cache/weather.xml | grep -o "speed=\"[^\"]*\"" | grep -o "\"[^\"]*\"" | grep -o "[^\"]*"} ${execi 300 grep "yweather:units" ~/.cache/weather.xml | grep -o "speed=\"[^\"]*\"" | grep -o "\"[^\"]*\"" | grep -o "[^\"]*"}${color}
+${color1}${alignr 55}${voffset 7}${execi 300 grep "yweather:wind" ~/.cache/weather.xml | grep -o "speed=\"[^\"]*\"" | grep -o "\"[^\"]*\"" | grep -o "[^\"]*" | tail -1 } ${execi 300 grep "yweather:units" ~/.cache/weather.xml | grep -o "speed=\"[^\"]*\"" | grep -o "\"[^\"]*\"" | grep -o "[^\"]*" | head -1}${color}
 \
 ${color3}${voffset 30}${alignc 77}${execi 300 grep "yweather:forecast" ~/.cache/weather.xml | grep -o "day=\"[^\"]*\"" | grep -o "\"[^\"]*\"" | grep -o "[^\"]*" | awk 'NR==1' | tr '[a-z]' '[A-Z]'}${color}
 ${color3}${voffset -13}${alignc}${execi 300 grep "yweather:forecast" ~/.cache/weather.xml | grep -o "day=\"[^\"]*\"" | grep -o "\"[^\"]*\"" | grep -o "[^\"]*" | awk 'NR==2' | tr '[a-z]' '[A-Z]'}${color}
 ${color3}${voffset -13}${alignc -77}${execi 300 grep "yweather:forecast" ~/.cache/weather.xml | grep -o "day=\"[^\"]*\"" | grep -o "\"[^\"]*\"" | grep -o "[^\"]*" | awk 'NR==3' | tr '[a-z]' '[A-Z]'}${color}
 \
-${color2}${voffset 40}${alignc 77}${execi 300 grep "yweather:forecast" ~/.cache/weather.xml | grep -o "low=\"[^\"]*\"" | grep -o "\"[^\"]*\"" | grep -o "[^\"]*" | awk 'NR==1'}°/${execi 300 grep "yweather:forecast" ~/.cache/weather.xml | grep -o "high=\"[^\"]*\"" | grep -o "\"[^\"]*\"" | grep -o "[^\"]*" | awk 'NR==1'}°${color}
-${color2}${voffset -13}${alignc}${execi 300 grep "yweather:forecast" ~/.cache/weather.xml | grep -o "low=\"[^\"]*\"" | grep -o "\"[^\"]*\"" | grep -o "[^\"]*" | awk 'NR==2'}°/${execi 300 grep "yweather:forecast" ~/.cache/weather.xml | grep -o "high=\"[^\"]*\"" | grep -o "\"[^\"]*\"" | grep -o "[^\"]*" | awk 'NR==2'}°${color}
-${color2}${voffset -13}${alignc -77}${execi 300 grep "yweather:forecast" ~/.cache/weather.xml | grep -o "low=\"[^\"]*\"" | grep -o "\"[^\"]*\"" | grep -o "[^\"]*" | awk 'NR==3'}°/${execi 300 grep "yweather:forecast" ~/.cache/weather.xml | grep -o "high=\"[^\"]*\"" | grep -o "\"[^\"]*\"" | grep -o "[^\"]*" | awk 'NR==3'}°${color}
+${color2}${voffset 40}${alignc 77}${execi 300 grep "yweather:forecast" ~/.cache/weather.xml | grep -o "high=\"[^\"]*\"" | grep -o "\"[^\"]*\"" | grep -o "[^\"]*" | awk 'NR==1'}°/${execi 300 grep "yweather:forecast" ~/.cache/weather.xml | grep -o "low=\"[^\"]*\"" | grep -o "\"[^\"]*\"" | grep -o "[^\"]*" | awk 'NR==1'}°${color}
+${color2}${voffset -13}${alignc}${execi 300 grep "yweather:forecast" ~/.cache/weather.xml | grep -o "high=\"[^\"]*\"" | grep -o "\"[^\"]*\"" | grep -o "[^\"]*" | awk 'NR==2'}°/${execi 300 grep "yweather:forecast" ~/.cache/weather.xml | grep -o "low=\"[^\"]*\"" | grep -o "\"[^\"]*\"" | grep -o "[^\"]*" | awk 'NR==2'}°${color}
+${color2}${voffset -13}${alignc -77}${execi 300 grep "yweather:forecast" ~/.cache/weather.xml | grep -o "high=\"[^\"]*\"" | grep -o "\"[^\"]*\"" | grep -o "[^\"]*" | awk 'NR==3'}°/${execi 300 grep "yweather:forecast" ~/.cache/weather.xml | grep -o "low=\"[^\"]*\"" | grep -o "\"[^\"]*\"" | grep -o "[^\"]*" | awk 'NR==3'}°${color}
 \
 # Cpu, memory and disk IO
 \
@@ -110,11 +114,11 @@ ${goto 40}${color2}${top_mem name 4}${color}${alignr 39}${top_mem mem_res 4}
 ${goto 40}${color2}${top_mem name 5}${color}${alignr 39}${top_mem mem_res 5}
 
 ${goto 40}${color1}Proc${color}${alignr 39}${color1}Cpu %${color}
-${goto 40}${color2}${top_mem name 1}${color}${alignr 39}${top cpu 1} %
-${goto 40}${color2}${top_mem name 2}${color}${alignr 39}${top cpu 2} %
-${goto 40}${color2}${top_mem name 3}${color}${alignr 39}${top cpu 3} %
-${goto 40}${color2}${top_mem name 4}${color}${alignr 39}${top cpu 4} %
-${goto 40}${color2}${top_mem name 5}${color}${alignr 39}${top cpu 5} %
+${goto 40}${color2}${top name 1}${color}${alignr 39}${top cpu 1} %
+${goto 40}${color2}${top name 2}${color}${alignr 39}${top cpu 2} %
+${goto 40}${color2}${top name 3}${color}${alignr 39}${top cpu 3} %
+${goto 40}${color2}${top name 4}${color}${alignr 39}${top cpu 4} %
+${goto 40}${color2}${top name 5}${color}${alignr 39}${top cpu 5} %
 
 \
 # Various images including the icons of the forecast #
@@ -122,6 +126,6 @@ ${goto 40}${color2}${top_mem name 5}${color}${alignr 39}${top cpu 5} %
 ${image ~/.conky/images/pressure.png -p 214,20 -s 16x16}\
 ${image ~/.conky/images/humidity.png -p 214,40 -s 16x16}\
 ${image ~/.conky/images/wind.png -p 214,60 -s 16x16}\
-${execi 300 cp -f ~/.conky/icons/$(grep "yweather:forecast" ~/.cache/weather.xml | grep -o "code=\"[^\"]*\"" | grep -o "\"[^\"]*\"" | grep -o "[^\"]*" | awk 'NR==1').png ~/.cache/weather-1.png}${image ~/.cache/weather-1.png -p 41,120 -s 32x32}\
-${execi 300 cp -f ~/.conky/icons/$(grep "yweather:forecast" ~/.cache/weather.xml | grep -o "code=\"[^\"]*\"" | grep -o "\"[^\"]*\"" | grep -o "[^\"]*" | awk 'NR==2').png ~/.cache/weather-2.png}${image ~/.cache/weather-2.png -p 119,120 -s 32x32}\
-${execi 300 cp -f ~/.conky/icons/$(grep "yweather:forecast" ~/.cache/weather.xml | grep -o "code=\"[^\"]*\"" | grep -o "\"[^\"]*\"" | grep -o "[^\"]*" | awk 'NR==3').png ~/.cache/weather-3.png}${image ~/.cache/weather-3.png -p 195,120 -s 32x32}${font}\
+${execi 300 cp -f ~/.conky/icons/$(grep "yweather:forecast" ~/.cache/weather.xml | grep -o "code=\"[^\"]*\"" | grep -o "\"[^\"]*\"" | grep -o "[^\"]*" | awk 'NR==2').png ~/.cache/weather-1.png}${image ~/.cache/weather-1.png -p 41,120 -s 32x32}\
+${execi 300 cp -f ~/.conky/icons/$(grep "yweather:forecast" ~/.cache/weather.xml | grep -o "code=\"[^\"]*\"" | grep -o "\"[^\"]*\"" | grep -o "[^\"]*" | awk 'NR==3').png ~/.cache/weather-2.png}${image ~/.cache/weather-2.png -p 119,120 -s 32x32}\
+${execi 300 cp -f ~/.conky/icons/$(grep "yweather:forecast" ~/.cache/weather.xml | grep -o "code=\"[^\"]*\"" | grep -o "\"[^\"]*\"" | grep -o "[^\"]*" | awk 'NR==4').png ~/.cache/weather-3.png}${image ~/.cache/weather-3.png -p 195,120 -s 32x32}${font}\
