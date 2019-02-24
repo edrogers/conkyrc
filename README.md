@@ -3,7 +3,7 @@ Conky configuration file
 
 This is my Conky configuration files. 
 
-![Conky](https://raw.github.com/zenzire/conkyrc/master/screenshot.png)
+![Conky](https://github.com/edrogers/conkyrc/raw/master/screenshot.png)
 
 
 Installation
@@ -12,7 +12,7 @@ Installation
 Fetch the configuration files from GitHub repository:
 
 ``
-$ git clone git://github.com/zenzire/conkyrc.git ~/.conky
+$ git clone git://github.com/edrogers/conkyrc.git ~/.conky
 ``
 
 Create link:
