@@ -26,8 +26,9 @@ madison = Location(
     station_id="KMSN",
     forecast_office_id="MKX",
     forecast_gridpoint_x=37,
-    forecast_gridpoint_y=63
+    forecast_gridpoint_y=63,
 )
+
 
 @dataclass
 class Forecast:
@@ -47,9 +48,9 @@ def get_weather_feature(
     from either the current weather conditions or the forecast.
 
     Args:
-        days_out (int): 
+        days_out (int):
             A number in the range [0, 3]
-        feature (str): 
+        feature (str):
             One of "Day", "Temp", "High", "Low",
             "Cond", "Code", "Pres", "Humi", "Wind"
 
@@ -72,13 +73,9 @@ def get_weather_feature(
         elif feature == "Cond":
             print(weather_data["current_condition"])
         else:
-            raise ValueError(
-                f"Unknown feature ({feature}) for days_out == {days_out}"
-            )
+            raise ValueError(f"Unknown feature ({feature}) for days_out == {days_out}")
     else:
-        raise ValueError(
-            f"Unknown feature ({feature}) for days_out == {days_out}"
-        )
+        raise ValueError(f"Unknown feature ({feature}) for days_out == {days_out}")
 
 
 @app.command()
@@ -88,12 +85,15 @@ def fetch_weather_data(
     forecast_gridpoint_x: int | None = None,
     forecast_gridpoint_y: int | None = None,
 ):
-    kwargs = [station_id, forecast_office_id, forecast_gridpoint_x, forecast_gridpoint_y]
+    kwargs = [
+        station_id,
+        forecast_office_id,
+        forecast_gridpoint_x,
+        forecast_gridpoint_y,
+    ]
     if any(kwarg is None for kwarg in kwargs):
         if any(kwarg is not None for kwarg in kwargs):
-            raise ValueError(
-                "Incomplete argument specification"
-            )
+            raise ValueError("Incomplete argument specification")
         else:
             location = madison
     else:
@@ -102,35 +102,34 @@ def fetch_weather_data(
             forecast_office_id=forecast_office_id,
             forecast_gridpoint_x=forecast_gridpoint_x,
             forecast_gridpoint_y=forecast_gridpoint_y,
-        )    
-    
+        )
+
     current_weather = requests.get(
         f"https://api.weather.gov/stations/{location.station_id}/observations/latest"
     ).json()
     forecast = requests.get(
         f"https://api.weather.gov/gridpoints/{location.forecast_office_id}/{location.forecast_gridpoint_x},{location.forecast_gridpoint_y}/forecast"
     ).json()
-    
+
     cwp = current_weather["properties"]
-    current_temperature = round(cwp["temperature"]["value"] * 9/5 + 32)
-    current_pressure =  round(cwp["barometricPressure"]["value"] * 0.00029529980164712, 2)
+    current_temperature = round(cwp["temperature"]["value"] * 9 / 5 + 32)
+    current_pressure = round(
+        cwp["barometricPressure"]["value"] * 0.00029529980164712, 2
+    )
     current_humidity = round(cwp["relativeHumidity"]["value"])
     current_windspeed = round(cwp["windSpeed"]["value"] * 0.621371, 2)
     current_condition = cwp["textDescription"]
     forecast_periods = forecast["properties"]["periods"]
     tonight_period_number = max(
-        [
-            period["number"] 
-            for period 
-            in forecast_periods 
-            if period["name"] == "Tonight"
-        ]
+        [period["number"] for period in forecast_periods if period["name"] == "Tonight"]
     )
-    
+
     forecast_days = []
     for day_num in range(3):
         period_1, period_2 = forecast_periods[
-            tonight_period_number+day_num*2:tonight_period_number+(day_num+1)*2
+            tonight_period_number
+            + day_num * 2 : tonight_period_number
+            + (day_num + 1) * 2
         ]
         forecast_days.append(extract_forecast_from_period_pair(period_1, period_2))
 
@@ -142,13 +141,15 @@ def fetch_weather_data(
         "current_condition": current_condition,
         "forecasts": forecast_days,
         "metadata": {
-            "fetch_timestamp": datetime.now(tz=timezone.utc).isoformat(timespec="seconds"),
+            "fetch_timestamp": datetime.now(tz=timezone.utc).isoformat(
+                timespec="seconds"
+            ),
             "current_weather_generated_at": cwp["timestamp"],
-            "forecast_generated_at": forecast["properties"]["generatedAt"]
-        }
+            "forecast_generated_at": forecast["properties"]["generatedAt"],
+        },
     }
     weather_path.write_text(json.dumps(results, indent=2))
-    
+
 
 def extract_forecast_from_period_pair(
     period_1: Mapping[str, Any],  # the odd period, with the High
@@ -160,8 +161,7 @@ def extract_forecast_from_period_pair(
     day = period_1["name"][:3]
     icon_url = period_1["icon"]
     r = re.match(
-        r"https:\/\/api\.weather\.gov\/icons\/land\/(day|night)\/(\w*).*",
-        icon_url
+        r"https:\/\/api\.weather\.gov\/icons\/land\/(day|night)\/(\w*).*", icon_url
     )
     nws_code = r.group(2)
     nws_to_yahoo_map = json.loads(

@@ -8,10 +8,7 @@ setup(
     packages=find_packages(),
     python_requires=">=3.10",
     include_package_data=True,
-    install_requires=[
-        "requests",
-"typer"
-    ],
+    install_requires=["requests", "typer"],
     entry_points="""
         [console_scripts]
         nwsweather=nws_weather.nws_weather:app
