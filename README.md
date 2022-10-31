@@ -11,15 +11,28 @@ Installation
 
 Fetch the configuration files from GitHub repository:
 
-``
-$ git clone git://github.com/edrogers/conkyrc.git ~/.conky
-``
+```sh
+git clone git://github.com/edrogers/conkyrc.git ~/.conky
+```
 
 Create link:
 
-``
+```sh
 ln -s ~/.conky/conkyrc ~/.conkyrc
-``
+```
+
+Install package
+
+```sh
+python3 -m pip install .
+```
+
+or, for pyenv+pipx usage:
+
+```sh
+PYENV_VERSION=3.10.7 pipx install .
+```
+
 
 Enjoy!
 
