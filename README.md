@@ -1,7 +1,7 @@
-Conky configuration file
-========================
+Conky configuration files
+=========================
 
-This is my Conky configuration files. 
+These are my Conky configuration files.
 
 ![Conky](https://github.com/edrogers/conkyrc/raw/master/screenshot.png)
 
