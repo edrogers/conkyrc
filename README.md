@@ -24,13 +24,7 @@ ln -s ~/.conky/conkyrc ~/.conkyrc
 Install package
 
 ```sh
-python3 -m pip install .
-```
-
-or, for pyenv+pipx usage:
-
-```sh
-PYENV_VERSION=3.10.7 pipx install .
+uv tool install .
 ```
 
 
